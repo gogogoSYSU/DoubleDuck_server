@@ -10,7 +10,7 @@ import (
 // Dish 单个菜品的信息
 type Dish struct {
 	//菜品名称 不会有相同的
-	DishName string `json:"dishname"`
+	DishName string `json:"dishname" bson:"_id"`
 	//菜品描述
 	DishDes string `json:"dishdes"`
 	//菜品价格
@@ -21,7 +21,9 @@ type Dish struct {
 	//菜品已售出数量
 	DishSales int `json:"dishsales"`
 	//菜品所属种类
-	DishCategory string `json:"category"` 
+	DishCategory string `json:"category" bson:"category"` 
+	//所属餐厅
+	DishBelong string `json:"belongrt"`
 }
 // Category 类别
 type Category struct {
@@ -32,11 +34,11 @@ type Category struct {
 }
 // Rt 每个餐厅的信息
 type Rt struct {
-	RtName string `json:"rtname"`
+	RtName string `json:"rtname" bson:"_id"` 
 	RtLocation string `json:"rtlocation"`
 	RtDes string `json:"rtdes"`
 	RtLogo string `json:"rtlogo_url"`
-	//RtDishes []Dish `json:"rtdishes"`
+	RtDishes []Dish `json:"rtdishes"`
 	RtCategories []Category `json:"rtcatogories"`
 }
 
