@@ -25,21 +25,16 @@ type Dish struct {
 	//所属餐厅
 	DishBelong string `json:"belongrt"`
 }
-// Category 类别
-type Category struct {
-	//类别名称
-	CategoryName string `json:"cgname"`
-	//类别包含的菜品
-	DishesContained []Dish `json:"dishes"`
-}
+
 // Rt 每个餐厅的信息
 type Rt struct {
 	RtName string `json:"rtname" bson:"_id"` 
 	RtLocation string `json:"rtlocation"`
 	RtDes string `json:"rtdes"`
 	RtLogo string `json:"rtlogo_url"`
-	RtDishes []Dish `json:"rtdishes"`
-	RtCategories []Category `json:"rtcatogories"`
+	//RtDishes []Dish `json:"rtdishes"`
+	RtCategories []string `json:"rtcategories"`
+	
 }
 
 // Orderitem 每个订单菜品的信息

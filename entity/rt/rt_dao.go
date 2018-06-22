@@ -17,7 +17,7 @@ import (
 
 // rt 记录每个餐厅的菜品使用同一个数据库，不同表
 var database *mgo.Database
-// RT Service
+// RTService 空类型
 type RTService struct{}
 //
 var service = RTService{}
@@ -27,6 +27,11 @@ func init() {
 	database = mangodb.Mydb.DB("rt")
 	fmt.Println("rt database init")
 }
+
+
+/***************************************
+rt数据库，对每个餐厅的菜品table查询修改
+***************************************/
 
 // InsertDish 添加一条菜品信息至所属餐厅的菜品table
 func (*RTService) InsertDish(dish *Dish) {
@@ -39,14 +44,37 @@ func (*RTService) InsertDish(dish *Dish) {
 }
 
 // FindByCatogory 通过所属种类找到菜品，为前端方便？？？
-func (*RTService) FindByCatogory(cato string) []Dish {
-	c := database.C(cato)
+func (*RTService) FindByCategory(cate string) []Dish {
+	c := database.C(cate)
 	dishes := []Dish{}
-	err := c.Find(bson.M{"category":cato}).All(&dishes)
+	err := c.Find(bson.M{"category":cate}).All(&dishes)
 	if err != nil {
 		panic(err)
 	}
 	return dishes
 }
 
+
+/***************************************
+rt数据库，对餐厅信息table查询修改
+***************************************/
+
 // InsertRT 添加一条餐厅信息到储存餐厅信息的table
+func (*RTService) InsertRT(rt *Rt) {
+	c := database.C("rt_table")
+	err := c.Insert(rt)
+	if err != nil {
+		panic(err)
+	}
+}
+// FindCateByRT 根据餐厅名字查询种类
+func (*RTService) FindCateByRT(rtname string) []string {
+	c := database.C("rt_table")
+	rt := Rt{}
+	err := c.Find(bson.M{"_id":rtname}).One(&rt)
+	if err != nil {
+		panic(err)
+	}
+	return rt.RtCategories
+}
+//更多操作待完善
