@@ -26,8 +26,10 @@ func init() {
 	//切换到rt数据库
 	database = mangodb.Mydb.DB("rt")
 	fmt.Println("rt database init")
-	array := [] string{"su","rou"}
-	service.InsertRT(newRT("HAOCHI","menkou","hhh","url",array))
+	//array := [] string{"su","rou"}
+	//service.InsertRT(newRT("RT1","LOC1","DES1","LOGO1","phone1",array))
+	//service.InsertDish(newDish("dish1","des1",22.8, "dishurl1", 1, "su", "RT1"))
+	//service.InsertDish(newDish("dish2", "des2", 22.1, "url2", 2, "rou", "RT1"))
 }
 
 
@@ -45,15 +47,24 @@ func (*RTService) InsertDish(dish *Dish) {
 	}
 }
 
-// FindByCatogory 通过所属种类找到菜品，为前端方便？？？
-func (*RTService) FindByCategory(cate string) []Dish {
-	c := database.C(cate)
+// FindByCategory 通过所属种类找到菜品，为前端方便？？？
+func (*RTService) FindByCategory(cate string, rt string) ([]DishInfo, int){
+	c := database.C(rt)
 	dishes := []Dish{}
 	err := c.Find(bson.M{"category":cate}).All(&dishes)
 	if err != nil {
 		panic(err)
 	}
-	return dishes
+
+	dishesinfo := make([]DishInfo,len(dishes))
+	for i := 0; i < len(dishes); i++ {
+		dishesinfo[i].DishDis = dishes[i].DishDes
+		dishesinfo[i].DishLogo = dishes[i].DishPicture
+		dishesinfo[i].DishName = dishes[i].DishName
+		dishesinfo[i].DishPrice = dishes[i].DishPrice
+		dishesinfo[i].DishSale = dishes[i].DishSales
+	}
+	return dishesinfo, len(dishes)
 }
 
 
@@ -77,16 +88,18 @@ func (*RTService) FindCateByRT(rtname string) []string {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("find cate by rt")
 	return rt.RtCategories
 }
 // FindDesLocByRT 根据餐厅名字查询餐厅简介
-func (*RTService) FindDesLocByRT(rtname string) (string,string) {
+func (*RTService) FindDesLocByRT(rtname string) (string,string,string,string) {
 	c := database.C("rt_table")
 	rt := Rt{}
 	err := c.Find(bson.M{"_id":rtname}).One(&rt)
 	if err != nil {
 		panic(err)
 	}
-	return rt.RtDes, rt.RtLocation
+	return rt.RtDes, rt.RtLocation, rt.RtLogo, rt.RtPhone
 } 
+
 //更多操作待完善

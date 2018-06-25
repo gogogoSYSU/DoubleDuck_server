@@ -33,5 +33,6 @@ func initRoutes(mx *mux.Router, formatter *render.Render) {
 //饭店部分
 func initRTRoutes(mx *mux.Router, formatter *render.Render){
 	//显示饭店信息
-	mx.HandleFunc("/v1/", showRTinfoHandle(formatter)).Methods("GET")
+	mx.HandleFunc("/v1/rt/", showRTinfoHandle(formatter)).Methods("GET")
+	mx.HandleFunc("/v1/dish/", showRTdishHandle(formatter)).Methods("GET")
 }
