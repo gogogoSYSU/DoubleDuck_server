@@ -5,7 +5,7 @@ restaurant的dao层,使用数据库接口，为上层逻辑提供接口
 package rt 
 
 import (
-	"errors"
+	//"errors"
 	"fmt"
 
 	"labix.org/v2/mgo"
@@ -26,6 +26,8 @@ func init() {
 	//切换到rt数据库
 	database = mangodb.Mydb.DB("rt")
 	fmt.Println("rt database init")
+	array := [] string{"su","rou"}
+	service.InsertRT(newRT("HAOCHI","menkou","hhh","url",array))
 }
 
 
@@ -77,4 +79,14 @@ func (*RTService) FindCateByRT(rtname string) []string {
 	}
 	return rt.RtCategories
 }
+// FindDesLocByRT 根据餐厅名字查询餐厅简介
+func (*RTService) FindDesLocByRT(rtname string) (string,string) {
+	c := database.C("rt_table")
+	rt := Rt{}
+	err := c.Find(bson.M{"_id":rtname}).One(&rt)
+	if err != nil {
+		panic(err)
+	}
+	return rt.RtDes, rt.RtLocation
+} 
 //更多操作待完善

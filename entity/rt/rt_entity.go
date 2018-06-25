@@ -37,6 +37,15 @@ type Rt struct {
 	
 }
 
+func newRT(name string, loc string, des string, logo string, cate []string) *Rt{
+	newrt := new(Rt)
+	newrt.RtName = name
+	newrt.RtLocation = loc
+	newrt.RtDes = des
+	newrt.RtLogo = logo
+	newrt.RtCategories = cate
+	return newrt
+}
 // Orderitem 每个订单菜品的信息
 type Orderitem struct {
 	ItemName string `json:"itemname"`
