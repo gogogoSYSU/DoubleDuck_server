@@ -28,6 +28,7 @@ func NewServer() *negroni.Negroni {
 func initRoutes(mx *mux.Router, formatter *render.Render) {
 	//handle url for homepage
 	initRTRoutes(mx, formatter)
+	initSalerRoutes(mx, formatter)
 }
 
 //饭店部分
@@ -35,4 +36,13 @@ func initRTRoutes(mx *mux.Router, formatter *render.Render){
 	//显示饭店信息
 	mx.HandleFunc("/v1/rt/", showRTinfoHandle(formatter)).Methods("GET")
 	mx.HandleFunc("/v1/dish/", showRTdishHandle(formatter)).Methods("GET")
+}
+
+//商家部分
+func initSalerRoutes(mx *mux.Router, formatter *render.Render) {
+	//创建新用户
+	mx.HandleFunc("/v1/salers", registerSalerHandle(formatter)).Methods("Post")
+
+	//显示用户信息
+	mx.HandleFunc("/v1/salers", listSalerInfoHandle(formatter)).Methods("GET")
 }
