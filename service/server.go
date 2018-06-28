@@ -43,6 +43,6 @@ func initSalerRoutes(mx *mux.Router, formatter *render.Render) {
 	//创建新用户
 	mx.HandleFunc("/v1/salers", registerSalerHandle(formatter)).Methods("Post")
 
-	//显示用户信息
-	mx.HandleFunc("/v1/salers", listSalerInfoHandle(formatter)).Methods("GET")
+	//用户登陆
+	mx.HandleFunc("/v1/salers/login", loginSalerHandle(formatter)).Methods("Post")
 }

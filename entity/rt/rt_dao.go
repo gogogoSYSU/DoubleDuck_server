@@ -26,10 +26,10 @@ func init() {
 	//切换到rt数据库
 	database = mangodb.Mydb.DB("rt")
 	fmt.Println("rt database init")
-	//array := [] string{"su","rou"}
-	//service.InsertRT(newRT("RT1","LOC1","DES1","LOGO1","phone1",array))
-	//service.InsertDish(newDish("dish1","des1",22.8, "dishurl1", 1, "su", "RT1"))
-	//service.InsertDish(newDish("dish2", "des2", 22.1, "url2", 2, "rou", "RT1"))
+//	array := [] string{"su","rou"}
+//	service.InsertRT(newRT("RT1","LOC1","DES1","LOGO1","phone1",array))
+//	service.InsertDish(newDish("dish1","des1",22.8, "dishurl1", 1, "su", "RT1"))
+//	service.InsertDish(newDish("dish2", "des2", 22.1, "url2", 2, "rou", "RT1"))
 }
 
 

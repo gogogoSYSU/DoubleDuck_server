@@ -53,6 +53,9 @@ func showRTinfoHandle(formatter *render.Render) http.HandlerFunc {
 		rtjson := RtInfoRtJSON{}
 		rtjson.RtName = rtname
 		rtjson.RtDes, rtjson.RtLoc, rtjson.RtLogo, rtjson.RtPhone = rt.GetRtBasicInfo(rtname)
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("content-type", "application/json")
 		formatter.JSON(w, http.StatusOK, rtjson)
 	}
 }
@@ -68,6 +71,10 @@ func showRTdishHandle(formatter *render.Render) http.HandlerFunc {
 		fmt.Println(rtname)
 		rtjson := DishesJSON{}
 		rtjson.Alldishes = rt.GetRtDishes(rtname)
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+                w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+                w.Header().Set("content-type", "application/json")
+
 		formatter.JSON(w, http.StatusOK, rtjson)
 	}
 }

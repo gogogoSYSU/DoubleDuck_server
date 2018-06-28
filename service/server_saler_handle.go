@@ -13,7 +13,7 @@ import (
 
 //SalerReturnJSON 用于返回商家信息
 type SalerRtnJson struct {
-	Password string `json:"pw"`
+	State string `json:"state"`
 //	ErrorRtnJson
 }
 
@@ -24,7 +24,7 @@ func registerSalerHandle(formatter *render.Render) http.HandlerFunc {
 		fmt.Println("registerSalerHandle!")
 
 		//解析参数
-		param := parseURL(r)
+		param := parsePost(r)
 		saler.RegisterSaler(param["openID"], param["pw"], param["rtname"])
 
 		//发回消息
@@ -32,25 +32,27 @@ func registerSalerHandle(formatter *render.Render) http.HandlerFunc {
 	}
 }
 
-//显示商家信息
-func listSalerInfoHandle(formatter *render.Render) http.HandlerFunc {
+//登陆
+func loginSalerHandle(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer errResponse(w, formatter)
-		fmt.Println("listSalerInfoHandle!")
+		fmt.Println("loginHandle!")
 
 		//解析参数
-		param := parseURL(r)
+		param := parsePost(r)
 
 		temp := saler.GetSalerPassword(param["openID"])
-
-		if temp == param["password"] {
+		fmt.Println(temp + " " + param["pw"])
+		if temp == param["pw"] {
 			temp = "OK"
 		} else {
 			temp = "Fail"
 		}
 
+		fmt.Println(temp)
+
 		formatter.JSON(w, http.StatusOK, SalerRtnJson{
-			Password:temp,
+			State:temp,
 			})
 	}
 }
