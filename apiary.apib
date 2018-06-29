@@ -1,80 +1,60 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://172.18.218.192/
 
 # gogogoSYSU
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+扫码点餐系统API详解
 
-## Questions Collection [/questions]
+## SalersRe [/v1/salers]
 
-### List All Questions [GET]
+关于商家注册的API介绍
+
+### SalerRegister [POST]
+
++ Parameter
+    + openID (required, string) - 用户ID
+    + pw (required, string) - 用户密码
+    + rtname (required, string) - 商家饭店名
+
++ Request (application/json)
+
+    [
+        {
+            "openID":"lianqy",
+            "pw":"lianqy",
+            "rtname":"双鸭山饭店"
+        }
+    ]
 
 + Response 200 (application/json)
 
         [
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
+                "state":"OK"
             }
         ]
 
-### Create a New Question [POST]
+## SalersLo [/v1/salers/login]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+关于商家登陆的API介绍
+
+### SalerLogin [POST]
+
++ Parameter
+    + openID (required, string) - 用户ID
+    + pw (required, string) - 用户密码
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "openID":"lianqy",
+            "pw":"lianqy"
         }
 
 + Response 201 (application/json)
 
-    + Headers
-
-            Location: /questions/2
-
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+                "state":"OK"
             }
