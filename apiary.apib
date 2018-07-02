@@ -58,3 +58,59 @@ HOST: http://172.18.218.192/
             {
                 "state":"OK"
             }
+            
+## RestaurantInfo [/v1/rt]
+
+获取餐厅的信息
+
+### RtInfo [GET]
+
++ Parameter
+    + rtname (required, string)
+    
++ Request (application/json)
+
+    {
+        "rtname":"双鸭山饭店"
+    }
+    
++ Response 201 (application/json)
+
+    + Body
+    
+        {
+            "rtname":"双鸭山饭店",
+            "rtdes":"双鸭山出品，必是精品",
+            "rtloc":"广州大学城",
+            "rtphone":"12345678909",
+            "rtlogo":"http://sysurt.org"
+        }
+
+## DishInfo [/v1/dish]
+
+获取菜单中的菜品信息
+
+### DishInfo [GET]
+
++ Parameter
+    + rtname (required, string)
+    
++ Request (application/json)
+
+    {
+        "rtname":"双鸭山饭店"
+    }
+    
++ Response 201 (application/json)
+
+    + Body
+        
+        [
+            {
+                "dishname":"清蒸双鸭",
+                "dishpict":"http://sysudoubleduck.org",
+                "dishsale":"999",
+                "dishprice":"￥99",
+                "dishdis":"超级好吃！"
+            }
+        ]
