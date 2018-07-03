@@ -63,4 +63,15 @@ func (*SalerService) FindPwByID(ID string) (string) {
 	return saler.Password
 }
 
-//更多操作待之后需要再写
+// 检测用户是否存在
+func (*SalerService) Checkid(ID string) (bool) {
+	saler := &SalerInfo{}
+
+	err := collector.Find(bson.M{"_id":ID}).One(saler)
+
+	if err != nil {
+		return false
+	}
+
+	return true
+}
