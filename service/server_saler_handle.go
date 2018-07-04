@@ -90,7 +90,7 @@ func uploadInfoHandle(formatter *render.Render) http.HandlerFunc {
 				})
 		} else {
 			fmt.Println("上传用户信息成功")
-			formatter.JSON(w, http.StatusOK, SalerRtnJson{
+			formatter.JSON(w, http.StatusCreated, SalerRtnJson{
 				State:"UploadRTInfoSuccess",
 				})
 		}
@@ -119,7 +119,7 @@ func uploadDishHandle(formatter *render.Render) http.HandlerFunc {
 				})
 		} else {
 			fmt.Println("上传用户信息成功")
-			formatter.JSON(w, http.StatusOK, SalerRtnJson{
+			formatter.JSON(w, http.StatusCreated, SalerRtnJson{
 				State:"UploadDishSuccess",
 			})
 		}
@@ -143,7 +143,7 @@ func createCateHandle(formatter *render.Render) http.HandlerFunc {
 			})
 		} else {
 			fmt.Println("添加菜品种类成功")
-			formatter.JSON(w, http.StatusOK, SalerRtnJson{
+			formatter.JSON(w, http.StatusCreated, SalerRtnJson{
 				State:"createCateSuccess",
 			})
 		}

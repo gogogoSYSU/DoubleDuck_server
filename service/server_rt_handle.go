@@ -107,7 +107,7 @@ func postOrderHandle(formatter *render.Render) http.HandlerFunc {
 		fmt.Println(temp.RTname)
 		fmt.Println(temp.TotalPrice)
 		fmt.Println(temp.Dishes)
-		formatter.JSON(w, http.StatusOK, RtnJSON{
+		formatter.JSON(w, http.StatusCreated, RtnJSON{
 			State:"post order success",
 		})
 	}	
