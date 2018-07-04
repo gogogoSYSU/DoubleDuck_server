@@ -14,7 +14,7 @@ type Dish struct {
 	//菜品描述
 	DishDes string `json:"dishdes"`
 	//菜品价格
-	DishPrice float32 `json:"dishprice"`
+	DishPrice float64 `json:"dishprice"`
 	//size? 
 	//菜品照片 url
 	DishPicture string `json:"dishpicture_url"`
@@ -25,7 +25,7 @@ type Dish struct {
 	//所属餐厅
 	DishBelong string `json:"belongrt"`
 }
-func newDish(name string, des string, price float32, pic string, sale int, cat string, rt string) *Dish{
+func newDish(name string, des string, price float64, pic string, sale int, cat string, rt string) *Dish{
 	newdish := new(Dish)
 	newdish.DishBelong = rt
 	newdish.DishCategory = cat
@@ -40,12 +40,12 @@ func newDish(name string, des string, price float32, pic string, sale int, cat s
 // Rt 每个餐厅的信息
 type Rt struct {
 	RtName string `json:"rtname" bson:"_id"` 
-	RtLocation string `json:"rtlocation"`
-	RtDes string `json:"rtdes"`
-	RtLogo string `json:"rtlogo_url"`
-	RtPhone string `json:"rtphone"`
+	RtLocation string `json:"rtlocation" bson:"rtlocation"`
+	RtDes string `json:"rtdes" bson:"rtdes"`
+	RtLogo string `json:"rtlogo_url" bson:"rtlogo"`
+	RtPhone string `json:"rtphone" bson:"rtphone"`
 	//RtDishes []Dish `json:"rtdishes"`
-	RtCategories []string `json:"rtcategories"`
+	RtCategories []string `json:"rtcategories" bson:"rtcate"`
 	
 }
 
@@ -81,7 +81,7 @@ type DishInfo struct {
 	DishName string `json:"dishname"`
 	DishLogo string `json:"dishpict"`
 	DishSale int `json:"dishsale"`
-	DishPrice float32 `json:"dishprice"`
+	DishPrice float64 `json:"dishprice"`
 	DishDis string `json:"dishdis"`
 }
 // DishInfos 一类菜品的信息

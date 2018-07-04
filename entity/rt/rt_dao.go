@@ -36,15 +36,32 @@ func init() {
 /***************************************
 rt数据库，对每个餐厅的菜品table查询修改
 ***************************************/
+// CheckDish 检查菜品是否重名了
+func (*RTService) CheckDish(rtname string, dishname string) bool{
+	c := database.C(rtname)
+	dish := Dish{}
+	err := c.Find(bson.M{"_id":dishname}).One(&dish)
+	exist := true
+	if err != nil {
+		exist = false
+		fmt.Println("上传菜品信息的名字没有重名,报错信息应该没有错")
+		//panic(err)
+	}
+	return exist
+}
 
 // InsertDish 添加一条菜品信息至所属餐厅的菜品table
-func (*RTService) InsertDish(dish *Dish) {
+func (*RTService) InsertDish(dish *Dish) bool{
 	//切换到所属集合，包含该餐厅菜品的表
 	c := database.C(dish.DishBelong)
 	err := c.Insert(dish)
+	ifok := true
 	if err != nil {
+		fmt.Println("insert dish fail")
+		ifok = false
 		panic(err)
 	}
+	return ifok
 }
 
 // FindByCategory 通过所属种类找到菜品，为前端方便？？？
@@ -53,7 +70,9 @@ func (*RTService) FindByCategory(cate string, rt string) ([]DishInfo, int){
 	dishes := []Dish{}
 	err := c.Find(bson.M{"category":cate}).All(&dishes)
 	if err != nil {
-		panic(err)
+		fmt.Println(cate)
+		fmt.Println("该种类没有对应菜品，find的err应该不是空的")
+		//panic(err)
 	}
 
 	dishesinfo := make([]DishInfo,len(dishes))
@@ -71,14 +90,43 @@ func (*RTService) FindByCategory(cate string, rt string) ([]DishInfo, int){
 /***************************************
 rt数据库，对餐厅信息table查询修改
 ***************************************/
-
+// CheckRT 检查餐厅是否已经被储存到餐厅信息的table，true表示在表中
+func (*RTService) CheckRT(name string) bool {
+	c := database.C("rt_table")
+	rt := Rt{}
+	err := c.Find(bson.M{"_id":name}).One(&rt)
+	if err != nil {
+		return false
+	}
+	return true
+}
 // InsertRT 添加一条餐厅信息到储存餐厅信息的table
-func (*RTService) InsertRT(rt *Rt) {
+func (*RTService) InsertRT(rt *Rt) bool{
 	c := database.C("rt_table")
 	err := c.Insert(rt)
+	ifok := true
 	if err != nil {
+		ifok = false
+		fmt.Println("insert rt info fail")
 		panic(err)
 	}
+	fmt.Println("insert rt info success")
+	return ifok
+}
+// UpdateRT 更改餐厅基本信息
+func (*RTService) UpdateRTInfo(name string, loc string, des string, logo string, phone string) bool {
+	c := database.C("rt_table")
+	selector := bson.M{"_id": name}
+	data := bson.M{"$set":bson.M{"rtloc":name, "rtdes":des, "rtlogo":logo, "rtphone":phone}}
+	err := c.Update(selector, data)
+	ifok := true
+	if err != nil {
+		fmt.Println("update rt info fail")
+		ifok = false
+		panic(err)
+	}
+	fmt.Println("update rt info success")
+	return ifok
 }
 // FindCateByRT 根据餐厅名字查询种类
 func (*RTService) FindCateByRT(rtname string) []string {
@@ -102,4 +150,17 @@ func (*RTService) FindDesLocByRT(rtname string) (string,string,string,string) {
 	return rt.RtDes, rt.RtLocation, rt.RtLogo, rt.RtPhone
 } 
 
+// CreateCateForRT 给餐厅添加参品种类
+func (*RTService) CreateCateForRT(rtname string, cate string) bool {
+	ifok := true
+	c := database.C("rt_table")
+	err := c.Update(
+		bson.M{"_id":rtname},
+		bson.M{"$push": bson.M{"rtcate":cate}})
+	if err != nil {
+		ifok = false
+		panic(err)
+	}
+	return ifok
+}
 //更多操作待完善

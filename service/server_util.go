@@ -67,3 +67,22 @@ func parsePost(r *http.Request) map[string]string {
 	}
 	return rtnmap
 }
+
+func parseOrder(r *http.Request) []byte {
+	// 解析参数
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+                panic(errors.New("203|解析url参数错误"))
+	}
+	//CheckNewErr(err, "203|解析json错误")
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+                fmt.Fprintln(os.Stderr, err)
+                panic(errors.New("203|解析url参数错误"))
+        }
+	//CheckNewErr(err, "203|解析json错误")
+	defer r.Body.Close()
+
+	return body
+}
