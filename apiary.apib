@@ -18,21 +18,19 @@ HOST: http://172.18.218.192/
 
 + Request (application/json)
 
-    [
-        {
-            "openID":"lianqy",
-            "pw":"lianqy",
-            "rtname":"双鸭山饭店"
-        }
-    ]
+    {
+        "openID":"lianqy",
+        "pw":"lianqy",
+        "rtname":"双鸭山饭店"
+    }
 
 + Response 200 (application/json)
 
-        [
-            {
-                "state":"OK"
-            }
-        ]
+    + Body
+
+        {
+            "state":"OK"
+        }
 
 ## SalersLo [/v1/salers/login]
 
@@ -55,9 +53,9 @@ HOST: http://172.18.218.192/
 
     + Body
 
-            {
-                "state":"OK"
-            }
+        {
+            "state":"OK"
+        }
             
 ## RestaurantInfo [/v1/rt]
 
@@ -74,7 +72,7 @@ HOST: http://172.18.218.192/
         "rtname":"双鸭山饭店"
     }
     
-+ Response 201 (application/json)
++ Response 200 (application/json)
 
     + Body
     
@@ -101,16 +99,196 @@ HOST: http://172.18.218.192/
         "rtname":"双鸭山饭店"
     }
     
-+ Response 201 (application/json)
++ Response 200 (application/json)
 
     + Body
         
         [
             {
-                "dishname":"清蒸双鸭",
-                "dishpict":"http://sysudoubleduck.org",
-                "dishsale":"999",
-                "dishprice":"￥99",
-                "dishdis":"超级好吃！"
+                "category":"cate1",
+                "dishesnum":1,
+                "disheslist": [
+                    {
+                        "dishname": "dishname1",
+                        "dishpict": "dishpic_url1",
+                        "dishsale": 23,
+                        "dish": 10.8,
+                        "dishdis": "dish description 1"
+                    }
+                ]
+            }, {
+                "category":"cate2",
+                "dishesnum": 2,
+                "disheslist": [
+                    {
+                        "dishname": "dishname2",
+                        "dishpict": "dishpic_url2",
+                        "dishsale": 33,
+                        "dish": 11,
+                        "dishdis": "dish description 2"
+                    }, {
+                        "dishname": "dishname3",
+                        "dishpict": "dishpic_url3",
+                        "dishsale": 12,
+                        "dish": 10.8,
+                        "dishdis": "dish description 3"
+                    }
+                ]
             }
         ]
+
+## OrderPost [/v1/order]
+
+上传订单
+
+### orderpost [POST]
+
++ Parameter
+    + storeName (required, string)
+    + totalPrice (required, float)
+    + selectedDish (required, []DishItem)
+
++ Request (application/json)
+
+    {
+        "storeName": "restaurant1",
+        "totalPrice": 24.5,
+        "selectedDish": [
+            {
+                "dish_name": "dish_name1",
+                "dish_pict": "dish_pict_url1",
+                "dish_sale": 666,
+                "dish_price": 18,
+                "dish_discription": "aaaaaaaaaaaaaaaaaaa"
+            }, {
+                "dish_name": "dish_name2",
+                "dish_pict": "dish_pict_url2",
+                "dish_sale": 777,
+                "dish_price": 12,
+                "dish_discription": "bbbbbbbbbbbbbbbbbbbbbb"
+            }
+        ]
+    }
+
++ Response 200 (application/json)
+
+    + Body
+
+        {
+            "State": "post order success"
+        }
+
+## RtPost [/v1/salers/info]
+
+上传饭店信息
+
+### rtpost [POST]
+
++ Parameter
+    + rtname (required, string)
+    + rtlocation (required, string)
+    + rtdes (required, string)
+    + rtlogo (required, string)
+    + rtphone (required, string)
+
++ Request (application/json)
+
+    {
+        "rtname": "RT NAME",
+            "rtlocation": "loc" ,
+            "rtdes": "description",
+            "rtlogo": "logo url",
+            "rtphone": "137XXXXXXXX"
+    }
+
++ Response 500 (application/json)
+
+    + Body
+
+        {
+            "State": "UploadRTInfoFail"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+        {
+            "State": "UploadRTInfoSuccess"
+        }
+
+## DishPost [/v1/salers/dish]
+
+上传菜品信息
+
+### dishpost [POST]
+
++ Parameter
+    + name (required, string)
+    + des (required, string)
+    + price (required, float)
+    + pic (required, string)
+    + sale (required, int)
+    + cate (required, string)
+    + rt (required, string)
+
++ Request (application/json)
+
+    {
+        "name": "dish name",
+            "des": "description",
+            "price": 33.8,
+            "pic": "dish logo url",
+            "sale": 12,
+            "cate": "cate1",
+            "rt": "RT NAME"
+    }
+
++ Response 500 (application/json)
+
+    + Body
+
+        {
+            "State": "UploadDishFail"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+        {
+            State": "UploadDishSuccess"
+        }
+
+## CatePost [/v1/salers/cate]
+
+上传菜品种类
+
+### catepost [POST]
+
++ Parameter
+    + rtname (required, string)
+    + cate (required, string)
+
++ Request (application/json)
+
+    {
+        "rtname": "rt name",
+        "cate": "add cate name"
+    }
+
++ Response 500 (application/json)
+
+    + Body
+
+        {
+            "State": "createCateFail"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+        {
+            "State": "createCateSuccess"
+        }
