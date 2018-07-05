@@ -36,6 +36,8 @@ func initRTRoutes(mx *mux.Router, formatter *render.Render){
 	//显示饭店信息
 	mx.HandleFunc("/v1/rt/", showRTinfoHandle(formatter)).Methods("GET")
 	mx.HandleFunc("/v1/dish/", showRTdishHandle(formatter)).Methods("GET")
+	//上传订单
+	mx.HandleFunc("/v1/order", postOrderHandle(formatter)).Methods("GET")
 }
 
 //商家部分
@@ -45,4 +47,11 @@ func initSalerRoutes(mx *mux.Router, formatter *render.Render) {
 
 	//用户登陆
 	mx.HandleFunc("/v1/salers/login", loginSalerHandle(formatter)).Methods("Post")
+
+	//上传饭店信息
+	mx.HandleFunc("/v1/salers/info", uploadInfoHandle(formatter)).Methods("Post")
+	//上传菜品信息
+	mx.HandleFunc("/v1/salers/dish", uploadDishHandle(formatter)).Methods("Post")
+	//新建菜品种类
+	mx.HandleFunc("/v1/salers/cate", createCateHandle(formatter)).Methods("Post")
 }

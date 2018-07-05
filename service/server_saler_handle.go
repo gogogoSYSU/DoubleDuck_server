@@ -3,8 +3,9 @@ package service
 import (
 	"fmt"
 	"net/http"
-
+	"strconv"
 	"github.com/gogogoSYSU/DoubleDuck_server/entity/saler"
+	"github.com/gogogoSYSU/DoubleDuck_server/entity/rt"
 	"github.com/unrolled/render"
 )
 
@@ -70,3 +71,86 @@ func loginSalerHandle(formatter *render.Render) http.HandlerFunc {
 		}
 	}
 }
+
+func uploadInfoHandle(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer errResponse(w, formatter)
+		fmt.Println("uploadInfoHandle!")
+
+		//解析参数
+		param := parsePost(r)
+
+		i := rt.UploadRtInfo(param["rtname"], param["rtlocation"], param["rtdes"],
+			 param["rtlogo"], param["rtphone"])
+
+		if i == false {
+			fmt.Println("上传用户信息失败")
+			formatter.JSON(w, http.StatusInternalServerError, SalerRtnJson{
+				State:"UploadRTInfoFail",
+				})
+		} else {
+			fmt.Println("上传用户信息成功")
+			formatter.JSON(w, http.StatusCreated, SalerRtnJson{
+				State:"UploadRTInfoSuccess",
+				})
+		}
+	}
+}
+//上传菜品，这里注意，上传菜品的种类肯定在上传菜品前就建立了
+func uploadDishHandle(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer errResponse(w, formatter)
+		fmt.Println("uploadDinshHandle!")
+
+		param := parsePost(r)
+		price, err := strconv.ParseFloat(param["price"], 64)
+		if err != nil {
+			panic(err)
+		}
+		sale, err := strconv.Atoi(param["sale"])
+		if err != nil {
+			panic(err)
+		}
+		i := rt.UploadDish(param["name"], param["des"], price, param["pic"], sale, param["cate"],param["rt"])
+		if i == false {
+			fmt.Println("上传菜品信息失败")
+			formatter.JSON(w, http.StatusInternalServerError, SalerRtnJson{
+				State:"UploadDishFail",
+				})
+		} else {
+			fmt.Println("上传用户信息成功")
+			formatter.JSON(w, http.StatusCreated, SalerRtnJson{
+				State:"UploadDishSuccess",
+			})
+		}
+	}
+}
+//新建菜品种类
+func createCateHandle(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer errResponse(w, formatter)
+		fmt.Println("createCateHandle!")
+
+		param := parsePost(r)
+		rtname := param["rtname"]
+		cate := param["cate"]
+		
+		succeed := rt.CreateCate(rtname, cate)
+		if succeed == false {
+			fmt.Println("添加菜品种类失败")
+			formatter.JSON(w, http.StatusInternalServerError, SalerRtnJson{
+				State:"createCateFail",
+			})
+		} else {
+			fmt.Println("添加菜品种类成功")
+			formatter.JSON(w, http.StatusCreated, SalerRtnJson{
+				State:"createCateSuccess",
+			})
+		}
+	}
+}
+
+
+
+
+
