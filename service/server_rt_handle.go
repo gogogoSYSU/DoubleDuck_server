@@ -30,7 +30,7 @@ func errResponse(w http.ResponseWriter, formatter *render.Render) {
 type RtInfoRtJSON struct {
 	RtName string `json:"rtname"`
 	RtDes string `json:"rtdes"`
-	RtLoc string `json:"rtloc"`
+	RtLoc string `json:"rtlocation"`
 	RtPhone string `json:"rtphone"`
 	RtLogo string `json:"rtlogo"`
 	//DishedInfo []rt.Dish `json:rtdishes`
