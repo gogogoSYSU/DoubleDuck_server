@@ -26,8 +26,8 @@ func init() {
 	//切换到rt数据库
 	database = mangodb.Mydb.DB("rt")
 	fmt.Println("rt database init")
-//	array := [] string{"su","rou"}
-//	service.InsertRT(newRT("RT1","LOC1","DES1","LOGO1","phone1",array))
+	array := [] string{"su","rou"}
+	service.InsertRT(newRT("RT1","LOC1","DES1","LOGO1","phone1",array))
 //	service.InsertDish(newDish("dish1","des1",22.8, "dishurl1", 1, "su", "RT1"))
 //	service.InsertDish(newDish("dish2", "des2", 22.1, "url2", 2, "rou", "RT1"))
 }
@@ -75,6 +75,8 @@ func (*RTService) FindByCategory(cate string, rt string) ([]DishInfo, int){
 		//panic(err)
 	}
 
+//	fmt.Println(dishes)
+
 	dishesinfo := make([]DishInfo,len(dishes))
 	for i := 0; i < len(dishes); i++ {
 		dishesinfo[i].DishDis = dishes[i].DishDes
@@ -117,7 +119,7 @@ func (*RTService) InsertRT(rt *Rt) bool{
 func (*RTService) UpdateRTInfo(name string, loc string, des string, logo string, phone string) bool {
 	c := database.C("rt_table")
 	selector := bson.M{"_id": name}
-	data := bson.M{"$set":bson.M{"rtloc":name, "rtdes":des, "rtlogo":logo, "rtphone":phone}}
+	data := bson.M{"$set":bson.M{"rtlocation":loc, "rtdes":des, "rtlogo":logo, "rtphone":phone}}
 	err := c.Update(selector, data)
 	ifok := true
 	if err != nil {
@@ -133,10 +135,12 @@ func (*RTService) FindCateByRT(rtname string) []string {
 	c := database.C("rt_table")
 	rt := Rt{}
 	err := c.Find(bson.M{"_id":rtname}).One(&rt)
+//	err := c.Find(nil).One(&rt)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("find cate by rt")
+	fmt.Println(rt)	
 	return rt.RtCategories
 }
 // FindDesLocByRT 根据餐厅名字查询餐厅简介
