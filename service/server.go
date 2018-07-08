@@ -37,7 +37,7 @@ func initRTRoutes(mx *mux.Router, formatter *render.Render){
 	mx.HandleFunc("/v1/rt/", showRTinfoHandle(formatter)).Methods("GET")
 	mx.HandleFunc("/v1/dish/", showRTdishHandle(formatter)).Methods("GET")
 	//上传订单
-	mx.HandleFunc("/v1/order", postOrderHandle(formatter)).Methods("GET")
+	mx.HandleFunc("/v1/order", postOrderHandle(formatter)).Methods("Post")
 }
 
 //商家部分

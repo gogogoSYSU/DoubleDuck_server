@@ -27,3 +27,7 @@ func GetSalerPassword(openID string) string {
 		return service.FindPwByID(openID)
 	}
 }
+
+func GetSalerRtname(openID string) string {
+	return service.FindRtnameByID(openID)
+}

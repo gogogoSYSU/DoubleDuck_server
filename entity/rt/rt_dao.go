@@ -12,11 +12,15 @@ import (
 	"labix.org/v2/mgo/bson"
 
 	"github.com/gogogoSYSU/DoubleDuck_server/mangodb"
+	"github.com/gogogoSYSU/DoubleDuck_server/util/mutexmanager"
 
 )
 
 // rt 记录每个餐厅的菜品使用同一个数据库，不同表
 var database *mgo.Database
+
+var locks *mutexmanager.RWMutexManager
+
 // RTService 空类型
 type RTService struct{}
 //
@@ -26,8 +30,10 @@ func init() {
 	//切换到rt数据库
 	database = mangodb.Mydb.DB("rt")
 	fmt.Println("rt database init")
-	array := [] string{"su","rou"}
-	service.InsertRT(newRT("RT1","LOC1","DES1","LOGO1","phone1",array))
+	locks = mutexmanager.New()
+	locks.AddLock("rt_table")
+//	array := [] string{"su","rou"}
+//	service.InsertRT(newRT("RT1","LOC1","DES1","LOGO1","phone1",array))
 //	service.InsertDish(newDish("dish1","des1",22.8, "dishurl1", 1, "su", "RT1"))
 //	service.InsertDish(newDish("dish2", "des2", 22.1, "url2", 2, "rou", "RT1"))
 }
@@ -38,9 +44,16 @@ rt数据库，对每个餐厅的菜品table查询修改
 ***************************************/
 // CheckDish 检查菜品是否重名了
 func (*RTService) CheckDish(rtname string, dishname string) bool{
+
 	c := database.C(rtname)
 	dish := Dish{}
+
+	locks.RLock(rtname)
+	fmt.Println("RLock " + rtname)
 	err := c.Find(bson.M{"_id":dishname}).One(&dish)
+	fmt.Println("RUnLock " + rtname)
+	locks.RUnlock(rtname)
+
 	exist := true
 	if err != nil {
 		exist = false
@@ -54,7 +67,13 @@ func (*RTService) CheckDish(rtname string, dishname string) bool{
 func (*RTService) InsertDish(dish *Dish) bool{
 	//切换到所属集合，包含该餐厅菜品的表
 	c := database.C(dish.DishBelong)
+
+	locks.WLock(dish.DishBelong)
+	fmt.Println("WLock " + dish.DishBelong)
 	err := c.Insert(dish)
+	fmt.Println("WUnLock " + dish.DishBelong)
+	locks.WUnlock(dish.DishBelong)
+
 	ifok := true
 	if err != nil {
 		fmt.Println("insert dish fail")
@@ -68,7 +87,13 @@ func (*RTService) InsertDish(dish *Dish) bool{
 func (*RTService) FindByCategory(cate string, rt string) ([]DishInfo, int){
 	c := database.C(rt)
 	dishes := []Dish{}
+
+	locks.RLock(rt)
+	fmt.Println("RLock " + rt)
 	err := c.Find(bson.M{"category":cate}).All(&dishes)
+	fmt.Println("RUnLock " + rt)
+	locks.RUnlock(rt)
+
 	if err != nil {
 		fmt.Println(cate)
 		fmt.Println("该种类没有对应菜品，find的err应该不是空的")
@@ -96,7 +121,13 @@ rt数据库，对餐厅信息table查询修改
 func (*RTService) CheckRT(name string) bool {
 	c := database.C("rt_table")
 	rt := Rt{}
+
+	locks.RLock("rt_table")
+	fmt.Println("RLock rt_table")
 	err := c.Find(bson.M{"_id":name}).One(&rt)
+	fmt.Println("RUnLock rt_table")
+	locks.RUnlock("rt_table")
+
 	if err != nil {
 		return false
 	}
@@ -105,13 +136,25 @@ func (*RTService) CheckRT(name string) bool {
 // InsertRT 添加一条餐厅信息到储存餐厅信息的table
 func (*RTService) InsertRT(rt *Rt) bool{
 	c := database.C("rt_table")
+
+	locks.WLock("rt_table")
+	fmt.Println("WLock rt_table")
 	err := c.Insert(rt)
+	fmt.Println("WUnLock rt_table")
+	locks.WUnlock("rt_table")
+
 	ifok := true
 	if err != nil {
 		ifok = false
 		fmt.Println("insert rt info fail")
 		panic(err)
 	}
+
+	if ifok == true {
+		locks.AddLock(rt.RtName)
+		fmt.Println("AddLock " + rt.RtName)
+	}
+
 	fmt.Println("insert rt info success")
 	return ifok
 }
@@ -120,7 +163,13 @@ func (*RTService) UpdateRTInfo(name string, loc string, des string, logo string,
 	c := database.C("rt_table")
 	selector := bson.M{"_id": name}
 	data := bson.M{"$set":bson.M{"rtlocation":loc, "rtdes":des, "rtlogo":logo, "rtphone":phone}}
+
+	locks.WLock("rt_table")
+	fmt.Println("WLock rt_table")
 	err := c.Update(selector, data)
+	fmt.Println("WUnLock rt_table")
+	locks.WUnlock("rt_table")
+
 	ifok := true
 	if err != nil {
 		fmt.Println("update rt info fail")
@@ -134,7 +183,13 @@ func (*RTService) UpdateRTInfo(name string, loc string, des string, logo string,
 func (*RTService) FindCateByRT(rtname string) []string {
 	c := database.C("rt_table")
 	rt := Rt{}
+
+	locks.RLock("rt_table")
+	fmt.Println("RLock rt_table")
 	err := c.Find(bson.M{"_id":rtname}).One(&rt)
+	fmt.Println("RUnLock rt_table")
+	locks.RUnlock("rt_table")
+
 //	err := c.Find(nil).One(&rt)
 	if err != nil {
 		panic(err)
@@ -147,7 +202,13 @@ func (*RTService) FindCateByRT(rtname string) []string {
 func (*RTService) FindDesLocByRT(rtname string) (string,string,string,string) {
 	c := database.C("rt_table")
 	rt := Rt{}
+
+	locks.RLock("rt_table")
+	fmt.Println("RLock rt_table")
 	err := c.Find(bson.M{"_id":rtname}).One(&rt)
+	fmt.Println("RUnLock rt_table")
+	locks.RUnlock("rt_table")
+
 	if err != nil {
 		panic(err)
 	}
@@ -158,13 +219,21 @@ func (*RTService) FindDesLocByRT(rtname string) (string,string,string,string) {
 func (*RTService) CreateCateForRT(rtname string, cate string) bool {
 	ifok := true
 	c := database.C("rt_table")
+
+	locks.WLock("rt_table")
+
+	fmt.Println("WLock rt_table")
+
 	err := c.Update(
 		bson.M{"_id":rtname},
 		bson.M{"$push": bson.M{"rtcate":cate}})
+
+	fmt.Println("WUnLock rt_table")
+	locks.WUnlock("rt_table")
+
 	if err != nil {
 		ifok = false
 		panic(err)
 	}
 	return ifok
 }
-//更多操作待完善

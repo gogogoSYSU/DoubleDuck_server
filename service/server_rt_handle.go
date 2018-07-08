@@ -107,6 +107,12 @@ func postOrderHandle(formatter *render.Render) http.HandlerFunc {
 		fmt.Println(temp.RTname)
 		fmt.Println(temp.TotalPrice)
 		fmt.Println(temp.Dishes)
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+                w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+                w.Header().Set("content-type", "application/json")
+
+
 		formatter.JSON(w, http.StatusCreated, RtnJSON{
 			State:"post order success",
 		})

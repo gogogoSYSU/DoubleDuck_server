@@ -7,7 +7,7 @@ package saler
 import (
 	"fmt"
 	"errors"
-//	"sync"
+	"sync"
 	"os"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
@@ -18,6 +18,7 @@ import (
 //saler 使用一个数据库，所有saler存储在同一张table
 var collector *mgo.Collection
 
+
 //空类型
 type SalerService struct{}
 
@@ -25,20 +26,24 @@ type SalerService struct{}
 var service = SalerService{}
 
 //用于临界区的同步互斥
-//var lock = *sync.RWMutex
+var lock *sync.RWMutex
 
 func init() {
 	collector = mangodb.Mydb.DB("saler").C("saler_table")
-	//lock = new(sync.RWMutex)
+	lock = new(sync.RWMutex)
 	fmt.Println("saler database init")
 //	service.Insert(newSaler("lianqy", "lianqy", "xixi"))
 }
 
 // Insert 插入新的saler信息
 func (*SalerService) Insert(saler *SalerInfo) {
-	//lock.Lock()
+
+	lock.Lock()
+	fmt.Println("Lock saler_table")
 	err := collector.Insert(saler)
-	//lock.Unlock()
+	fmt.Println("UnLock saler_table")
+	lock.Unlock()
+
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		panic(errors.New("insert saler info出错"))
@@ -49,11 +54,11 @@ func (*SalerService) Insert(saler *SalerInfo) {
 func (*SalerService) FindPwByID(ID string) (string) {
 	saler := &SalerInfo{}
 
-	//lock.Lock()
-
+	lock.RLock()
+	fmt.Println("RLock saler_table")
 	err := collector.Find(bson.M{"_id":ID}).One(saler)
-
-	//lock.Unlock()
+	fmt.Println("RUnLock saler_table")
+	lock.RUnlock()
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -63,11 +68,31 @@ func (*SalerService) FindPwByID(ID string) (string) {
 	return saler.Password
 }
 
+func (*SalerService) FindRtnameByID(ID string) (string) {
+	saler := &SalerInfo{}
+
+	lock.RLock()
+	fmt.Println("RLock saler_table")
+	err := collector.Find(bson.M{"_id":ID}).One(saler)
+	fmt.Println("RUnLock saler_table")
+	lock.RUnlock()
+
+	if err != nil {
+		panic(errors.New("数据库没有这个id"))
+		return ""
+	}
+	return saler.Restaurant
+}
+
 // 检测用户是否存在
 func (*SalerService) Checkid(ID string) (bool) {
 	saler := &SalerInfo{}
 
+	lock.RLock()
+	fmt.Println("RLock saler_table")
 	err := collector.Find(bson.M{"_id":ID}).One(saler)
+	fmt.Println("RUnLock saler_table")
+	lock.RUnlock()
 
 	if err != nil {
 		return false

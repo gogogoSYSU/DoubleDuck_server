@@ -34,6 +34,7 @@ func registerSalerHandle(formatter *render.Render) http.HandlerFunc {
 				Errorinformation:"用户已注册",
 			})
 		} else {
+			rt.UploadRtInfo(param["rtname"], "none", "none", "http://p8pbukobc.bkt.clouddn.com/logo1.png", "none")
 			formatter.JSON(w, http.StatusOK, ErrorRtnJSON{})
 		}
 	}
@@ -58,7 +59,7 @@ func loginSalerHandle(formatter *render.Render) http.HandlerFunc {
 				})
 		} else {
 			if temp == param["pw"] {
-				temp = "OK"
+				temp = saler.GetSalerRtname(param["openID"])
 			} else {
 				temp = "Fail"
 			}
